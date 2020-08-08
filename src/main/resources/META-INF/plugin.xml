@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.github.odinmillion.gdbessentials</id>
-    <name>gdb_essentials</name>
+    <name>GDB Essentials</name>
     <vendor>odinmillion</vendor>
 
     <!-- Product and plugin compatibility requirements -->
@@ -16,4 +16,15 @@
         <listener class="com.github.odinmillion.gdbessentials.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </projectListeners>
+
+    <actions>
+        <group id="com.github.odinmillion.gdbessentials.action.GroupedActions" text="GDB Essentials" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="com.github.odinmillion.gdbessentials.action.CreateBreakCommandAction"/>
+            <action id="com.github.odinmillion.gdbessentials.action.CreateBreakCommandAction"
+                    class="com.github.odinmillion.gdbessentials.action.CreateBreakCommandAction"
+                    text="Generate break command"
+                    description="Generate break command with source path and line number">
+            </action>
+        </group>
+    </actions>
 </idea-plugin>
