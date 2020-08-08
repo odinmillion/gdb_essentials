@@ -20,10 +20,15 @@
     <actions>
         <group id="com.github.odinmillion.gdbessentials.action.GroupedActions" text="GDB Essentials" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="com.github.odinmillion.gdbessentials.action.CreateBreakCommandAction"/>
-            <action id="com.github.odinmillion.gdbessentials.action.CreateBreakCommandAction"
-                    class="com.github.odinmillion.gdbessentials.action.CreateBreakCommandAction"
-                    text="Generate break command"
-                    description="Generate break command with source path and line number">
+            <action id="com.github.odinmillion.gdbessentials.action.GenerateBreakCommandFromCaretAction"
+                    class="com.github.odinmillion.gdbessentials.action.GenerateBreakCommandFromCaretAction"
+                    text="Generate break from caret"
+                    description="Generate break command from caret position">
+            </action>
+            <action id="com.github.odinmillion.gdbessentials.action.GenerateBreakCommandFromBreakpointsAction"
+                    class="com.github.odinmillion.gdbessentials.action.GenerateBreakCommandFromBreakpointsAction"
+                    text="Generate breaks from toggled breakpoints"
+                    description="Generate multiple break commands from toggled breakpoints">
             </action>
         </group>
     </actions>

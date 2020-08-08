@@ -5,23 +5,24 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.LangDataKeys
-import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.ide.CopyPasteManager
-import com.intellij.psi.PsiFile
+import com.intellij.xdebugger.XDebuggerManager
+import com.intellij.xdebugger.breakpoints.XBreakpointManager
+import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl
 import java.awt.datatransfer.StringSelection
 import java.io.PrintWriter
 import java.io.StringWriter
 import javax.swing.Icon
 
-internal class CreateBreakCommandAction : AnAction {
+internal class GenerateBreakCommandFromBreakpointsAction : AnAction {
 
     constructor() : super()
 
     constructor(text: String?, description: String?, icon: Icon?) : super(text, description, icon)
 
     override fun actionPerformed(event: AnActionEvent) = try {
-        var cmd = createCommandText(event)
+
+        var cmd = createCommandText(event, 1)
         CopyPasteManager.getInstance().setContents(StringSelection(cmd))
         Notifications.Bus.notify(
             Notification(
@@ -45,31 +46,36 @@ internal class CreateBreakCommandAction : AnAction {
     }
 
     private fun createErrorMessage(e: Throwable): String {
+
         val sw = StringWriter()
         e.printStackTrace(PrintWriter(sw))
         val exceptionAsString = sw.toString()
         return "Can't create gdb command: $e $exceptionAsString"
     }
 
-    private fun createCommandText(event: AnActionEvent): String? {
+    private fun createCommandText(event: AnActionEvent, dropCount: Int): String? {
 
-        fun getLineNumber(event: AnActionEvent): Int {
+        val manager: XBreakpointManager = XDebuggerManager.getInstance(event.project!!).breakpointManager
+        var breakpoints = manager.allBreakpoints.filterIsInstance<XLineBreakpointImpl<*>>()
 
-            var data: Caret? = event.getData(LangDataKeys.CARET)
-            var visualPosition = data!!.caretModel.visualPosition
-            return visualPosition.line + 1
+        val id = (0..1000000).random()
+        val name = "set_breakpoints_$id"
+        var cmd = "define $name\n"
+        for (breakpoint in breakpoints.filter { b -> b.isEnabled }) {
+            var path = getRelativePath(event, breakpoint.file!!.path, dropCount)
+            var line = breakpoint.line + 1
+            cmd += "    break $path:$line\n"
         }
+        cmd += "end\n"
+        cmd += "$name\n"
+        return cmd
+    }
 
-        fun getRelativePath(event: AnActionEvent): String {
+    fun getRelativePath(event: AnActionEvent, fullPath: String, dropCount: Int): String {
 
-            var basePath: String? = event.project?.basePath
-            var file: PsiFile? = event.getData(LangDataKeys.PSI_FILE)
-            var path = file!!.virtualFile.path
-            return path.substring(basePath!!.length + 1)
-        }
-
-        var relativePath = getRelativePath(event)
-        val lineNumber = getLineNumber(event)
-        return "break $relativePath:$lineNumber"
+        var basePath = event.project!!.basePath
+        val substring = fullPath.substring(basePath!!.length + 1)
+        var split: List<String> = substring.split("/").drop(dropCount)
+        return split.joinToString("/")
     }
 }

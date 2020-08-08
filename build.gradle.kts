@@ -59,6 +59,7 @@ intellij {
 // Configure detekt plugin.
 // Read more: https://detekt.github.io/detekt/kotlindsl.html
 detekt {
+    ignoreFailures = true
     config = files("./detekt-config.yml")
     buildUponDefaultConfig = true
 
