@@ -1,8 +1,8 @@
 package com.github.odinmillion.gdbessentials.listeners
 
+import com.github.odinmillion.gdbessentials.services.MyProjectService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
-import com.github.odinmillion.gdbessentials.services.MyProjectService
 
 internal class MyProjectManagerListener : ProjectManagerListener {
 

@@ -1,7 +1,7 @@
 package com.github.odinmillion.gdbessentials.services
 
-import com.intellij.openapi.project.Project
 import com.github.odinmillion.gdbessentials.MyBundle
+import com.intellij.openapi.project.Project
 
 class MyProjectService(project: Project) {
 

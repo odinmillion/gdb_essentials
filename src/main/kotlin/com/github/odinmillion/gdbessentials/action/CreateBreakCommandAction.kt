@@ -14,28 +14,44 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import javax.swing.Icon
 
-
 internal class CreateBreakCommandAction : AnAction {
 
     constructor() : super()
 
-    constructor(text: String?, description: String?, icon: Icon?)
-            : super(text, description, icon)
+    constructor(text: String?, description: String?, icon: Icon?) : super(text, description, icon)
 
     override fun actionPerformed(event: AnActionEvent) = try {
         var cmd = createCommandText(event)
         CopyPasteManager.getInstance().setContents(StringSelection(cmd))
-        Notifications.Bus.notify(Notification("gdb_essentials", "GDB Essentials | Success",
-                "Gdb command was copied into the clipboard: '$cmd'", NotificationType.INFORMATION))
-    } catch (e: Throwable) {
+        Notifications.Bus.notify(
+            Notification(
+                "gdb_essentials",
+                "GDB Essentials | Success",
+                "Gdb command was copied into the clipboard: '$cmd'",
+                NotificationType.INFORMATION
+            )
+        )
+    } catch (e: @Suppress("TooGenericExceptionCaught") Throwable) {
+
+        var message = createErrorMessage(e)
+        Notifications.Bus.notify(
+            Notification(
+                "gdb_essentials",
+                "GDB Essentials | Error",
+                message,
+                NotificationType.ERROR
+            )
+        )
+    }
+
+    private fun createErrorMessage(e: Throwable): String {
         val sw = StringWriter()
         e.printStackTrace(PrintWriter(sw))
         val exceptionAsString = sw.toString()
-        Notifications.Bus.notify(Notification("gdb_essentials", "GDB Essentials | Error",
-                "Can't create gdb command: $e $exceptionAsString", NotificationType.ERROR))
+        return "Can't create gdb command: $e $exceptionAsString"
     }
 
-    private fun createCommandText(event: AnActionEvent): String {
+    private fun createCommandText(event: AnActionEvent): String? {
 
         fun getLineNumber(event: AnActionEvent): Int {
 
@@ -54,7 +70,6 @@ internal class CreateBreakCommandAction : AnAction {
 
         var relativePath = getRelativePath(event)
         val lineNumber = getLineNumber(event)
-        var cmd = "break $relativePath:$lineNumber";
-        return cmd
+        return "break $relativePath:$lineNumber"
     }
 }
