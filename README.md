@@ -14,12 +14,51 @@
 - [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
 
 <!-- Plugin description -->
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
 
-This specific section is a source for the [plugin.xml](/src/main/resources/META-INF/plugin.xml) file which will be
-extracted by the [Gradle](/build.gradle.kts) during the build process.
+This plugin will help you transfer breakpoints from the CLion to the gdb process. 
+All instructions will be copied into the clipboard. Then you can paste them into the standalone gdb debugger.
 
-To keep everything working, do not remove `<!-- ... -->` sections. 
+<br/><br/>
+
+`1. Tools -> GDB Essentials -> Generate break from caret`
+
+<br/><br/>
+
+In that scenario you can set one breakpoint from the caret position.
+
+<br/><br/>
+
+```
+break Reader::Run
+```
+
+<br/><br/>
+
+```
+break brown_belt/week3/pipeline.cpp:63
+```
+
+<br/><br/>
+
+`2. Tools -> GDB Essentials -> Generate breaks from enabled breakpoints`
+
+<br/><br/>
+
+In that scenario you can set multiple breakpoints from the active breakpoints.
+
+<br/><br/>
+
+```
+define set_breakpoints_713241
+    break yellow_belt/other/starter.cpp:91
+    break brown_belt/week3/pipeline.cpp:33
+    break brown_belt/week3/pipeline.cpp:25
+end
+set_breakpoints_713241
+```
+
+<br/><br/>
+
 <!-- Plugin description end -->
 
 ## Installation
